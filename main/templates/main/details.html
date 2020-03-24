@@ -19,8 +19,13 @@
                 <h5>Director: {{ movie.director }}</h5>
                 <h5>Cast: {{ movie.cast }}</h5>
                 <h5>Rating: {{ movie.averageRating }}</h5>
-                <a href="{% url 'main:edit_movies' movie.id %}" class="btn btn-warning">Edit Movie</a>
-                <a href="{% url 'main:delete_movie' movie.id %}" class="btn btn-danger">Delete Movie</a>
+
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'main:edit_movies' movie.id %}" class="btn btn-warning">Edit Movie</a>
+                        <a href="{% url 'main:delete_movie' movie.id %}" class="btn btn-danger">Delete Movie</a>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
