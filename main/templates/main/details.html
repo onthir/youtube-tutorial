@@ -30,6 +30,35 @@
         </div>
     </div>
     </div>
+
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <h3 class="text-center">Reviews</h3>
+            <form action="{% url 'main:add_review' movie.id %}" method="POST">
+                {% csrf_token %}
+                <label for="comment">Review</label>
+                <textarea name="comment" id="comment" cols="30" rows="5" class="form-control"></textarea>
+
+                <label for="rating">Rating</label>
+                <input type="text" name="rating" class="form-control">
+                
+                <br>
+                <input type="submit" class="btn btn-danger" value="Add Review">
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ul>
+            {% for review in reviews %}
+
+                <li>{{ review.comment }} <i>{{ review.user }}</i></li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
 </div>
 
 

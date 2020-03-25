@@ -16,9 +16,11 @@ def home(request):
 # detail page
 def detail(request, id):
     movie = Movie.objects.get(id=id) # select * from movie where id=id
+    reviews = Review.objects.filter(movie=id)
 
     context = {
-        "movie": movie
+        "movie": movie,
+        "reviews": reviews
     }
     return render(request, 'main/details.html', context)
 
@@ -89,3 +91,22 @@ def delete_movies(request, id):
 
     # if they are not loggedin
     return redirect("accounts:login") 
+
+def add_review(request, id):
+    if request.user.is_authenticated:
+        movie = Movie.objects.get(id=id)
+        if request.method == "POST":
+            form = ReviewForm(request.POST or None)
+            if form.is_valid():
+                data = form.save(commit=False)
+                data.comment = request.POST["comment"]
+                data.rating = request.POST["rating"]
+                data.user = request.user
+                data.movie = movie
+                data.save()
+                return redirect("main:detail", id)
+        else:
+            form = ReviewForm()
+        return render(request, 'main/details.html', {"form": form})
+    else:
+        return redirect("accounts:login")
