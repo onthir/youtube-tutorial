@@ -5,7 +5,12 @@ from .forms import *
 from django.db.models import Avg
 # Create your views here.
 def home(request):
-    allMovies = Movie.objects.all()  # select * from movie
+    query = request.GET.get("title")
+    allMovies = None
+    if query:
+        allMovies = Movie.objects.filter(name__icontains=query)
+    else:
+        allMovies = Movie.objects.all()  # select * from movie
     
     context = {
         "movies": allMovies,
