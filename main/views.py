@@ -16,7 +16,7 @@ def home(request):
 # detail page
 def detail(request, id):
     movie = Movie.objects.get(id=id) # select * from movie where id=id
-    reviews = Review.objects.filter(movie=id)
+    reviews = Review.objects.filter(movie=id).order_by("-comment")
 
     context = {
         "movie": movie,
@@ -108,5 +108,48 @@ def add_review(request, id):
         else:
             form = ReviewForm()
         return render(request, 'main/details.html', {"form": form})
+    else:
+        return redirect("accounts:login")
+
+
+# edit the review
+def edit_review(request, movie_id, review_id):
+    if request.user.is_authenticated:
+        movie = Movie.objects.get(id=movie_id)
+        # review
+        review = Review.objects.get(movie=movie, id=review_id)
+
+        # check if the review was done by the logged in user
+        if request.user == review.user:
+            # grant permission
+            if request.method == "POST":
+                form = ReviewForm(request.POST, instance=review)
+                if form.is_valid():
+                    data = form.save(commit=False)
+                    data.save()
+                    return redirect("main:detail", movie_id)
+            else:
+                form = ReviewForm(instance=review)
+            return render(request, 'main/editreview.html', {"form": form})
+        else:
+            return redirect("main:detail", movie_id)
+    else:
+        return redirect("accounts:login")
+
+
+# delete reivew
+def delete_review(request, movie_id, review_id):
+    if request.user.is_authenticated:
+        movie = Movie.objects.get(id=movie_id)
+        # review
+        review = Review.objects.get(movie=movie, id=review_id)
+
+        # check if the review was done by the logged in user
+        if request.user == review.user:
+            # grant permission to delete
+            review.delete()
+
+        return redirect("main:detail", movie_id)
+            
     else:
         return redirect("accounts:login")

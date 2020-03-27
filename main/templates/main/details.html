@@ -23,7 +23,7 @@
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_superuser %}
                         <a href="{% url 'main:edit_movies' movie.id %}" class="btn btn-warning">Edit Movie</a>
-                        <a href="{% url 'main:delete_movie' movie.id %}" class="btn btn-danger">Delete Movie</a>
+                        <a href="{% url 'main:delete_movie' movie.id %}" class="btn btn-danger"  onclick="return confirm('Are you sure you want to delete this?');">Delete Movie</a>
                     {% endif %}
                 {% endif %}
             </div>
@@ -34,7 +34,7 @@
     <br>
     <div class="card">
         <div class="card-body">
-            <h3 class="text-center">Reviews</h3>
+            <h3 class="text-center">Add Review</h3>
             <form action="{% url 'main:add_review' movie.id %}" method="POST">
                 {% csrf_token %}
                 <label for="comment">Review</label>
@@ -48,15 +48,31 @@
             </form>
         </div>
     </div>
-
+    <br>
     <div class="card">
         <div class="card-body">
-            <ul>
+            <h3 class="text-center">Reviews</h3>
             {% for review in reviews %}
+                <div class="card" style="background-color: #f5eeee;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5 class="text-left">{{ review.user.username }}</h5>
+                                <h5>{{ review.rating }}</h5>
+                                {% if request.user == review.user %}
+                                <a href="{% url 'main:edit_review' movie.id review.id %}">Edit</a>
+                                <a href="{% url 'main:delete_review' movie.id review.id %}" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                {% endif %}
 
-                <li>{{ review.comment }} <i>{{ review.user }}</i></li>
-            {% endfor %}
-        </ul>
+                            </div>
+                            <div class="col-md-9">
+                                <p>{{ review.comment }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
         </div>
     </div>
 </div>
