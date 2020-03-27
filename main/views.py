@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
 from .forms import *
-
+from django.db.models import Avg
 # Create your views here.
 def home(request):
     allMovies = Movie.objects.all()  # select * from movie
@@ -18,9 +18,14 @@ def detail(request, id):
     movie = Movie.objects.get(id=id) # select * from movie where id=id
     reviews = Review.objects.filter(movie=id).order_by("-comment")
 
+    average = reviews.aggregate(Avg("rating"))["rating__avg"]
+    if average == None:
+        average = 0
+    average = round(average, 2)
     context = {
         "movie": movie,
-        "reviews": reviews
+        "reviews": reviews,
+        "average": average
     }
     return render(request, 'main/details.html', context)
 

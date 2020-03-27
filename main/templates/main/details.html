@@ -18,7 +18,7 @@
                 <p>{{ movie.description }}</p>
                 <h5>Director: {{ movie.director }}</h5>
                 <h5>Cast: {{ movie.cast }}</h5>
-                <h5>Rating: {{ movie.averageRating }}</h5>
+                <h5>Rating: {{ average }}/10</h5>
 
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_superuser %}
